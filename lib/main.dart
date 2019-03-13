@@ -23,6 +23,7 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   final _messages = <ChatMessage>[];
   final _textController = TextEditingController();
+  bool _isTextEmpty = true;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +62,7 @@ class ChatScreenState extends State<ChatScreen> {
                 Flexible(
                   child: TextField(
                     controller: _textController,
+                    onChanged: _handleTextChanged,
                     onSubmitted: _handleSubmitted,
                     decoration:
                         InputDecoration.collapsed(hintText: "Send a message"),
@@ -70,7 +72,9 @@ class ChatScreenState extends State<ChatScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 4.0),
                   child: IconButton(
                       icon: Icon(Icons.send),
-                      onPressed: () => _handleSubmitted(_textController.text)),
+                      onPressed: _isTextEmpty
+                          ? null
+                          : () => _handleSubmitted(_textController.text)),
                 )
               ],
             )));
@@ -83,6 +87,14 @@ class ChatScreenState extends State<ChatScreen> {
     );
     setState(() {
       _messages.insert(0, message);
+    });
+  }
+
+  void _handleTextChanged(String text) {
+    if (_isTextEmpty == text.isEmpty) return;
+
+    setState(() {
+      _isTextEmpty = text.isEmpty;
     });
   }
 }
