@@ -55,34 +55,34 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget _buildTextComposer() {
     return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: <Widget>[
-                Flexible(
-                  child: TextField(
-                    controller: _textController,
-                    onChanged: _handleTextChanged,
-                    onSubmitted: _handleSubmitted,
-                    decoration:
-                        InputDecoration.collapsed(hintText: "Send a message"),
-                  ),
-                ),
-                IconTheme(
-                  data: IconThemeData(color: Theme.of(context).accentColor),
-                  child: Theme.of(context).platform == TargetPlatform.iOS
-                      ? CupertinoButton(
-                          child: Text("Send"),
-                          onPressed: _isTextEmpty
-                              ? null
-                              : () => _handleSubmitted(_textController.text))
-                      : IconButton(
-                          icon: Icon(Icons.send),
-                          onPressed: _isTextEmpty
-                              ? null
-                              : () => _handleSubmitted(_textController.text)),
-                )
-              ],
-            ));
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        children: <Widget>[
+          Flexible(
+            child: TextField(
+              controller: _textController,
+              onChanged: _handleTextChanged,
+              onSubmitted: _handleSubmitted,
+              decoration: InputDecoration.collapsed(hintText: "Send a message"),
+            ),
+          ),
+          IconTheme(
+            data: IconThemeData(color: Theme.of(context).accentColor),
+            child: Theme.of(context).platform == TargetPlatform.iOS
+                ? CupertinoButton(
+                    child: Text("Send"),
+                    onPressed: _isTextEmpty
+                        ? null
+                        : () => _handleSubmitted(_textController.text))
+                : IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: _isTextEmpty
+                        ? null
+                        : () => _handleSubmitted(_textController.text)),
+          )
+        ],
+      ),
+    );
   }
 
   void _handleSubmitted(String text) {
