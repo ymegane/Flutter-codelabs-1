@@ -21,7 +21,7 @@ class ChatScreen extends StatefulWidget {
   State createState() => ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final _messages = <ChatMessage>[];
   final _textController = TextEditingController();
   bool _isTextEmpty = true;
@@ -51,6 +51,14 @@ class ChatScreenState extends State<ChatScreen> {
             ],
           ),
         ));
+  }
+
+  @override
+  void dispose() {
+    for (final message in _messages) {
+      message.animationController.dispose();
+    }
+    super.dispose();
   }
 
   Widget _buildTextComposer() {
@@ -89,11 +97,16 @@ class ChatScreenState extends State<ChatScreen> {
     _textController.clear();
     final message = ChatMessage(
       text: text,
+      animationController: AnimationController(
+        duration: Duration(microseconds: 700),
+        vsync: this,
+      ),
     );
     setState(() {
-      _isTextEmpty = true;
       _messages.insert(0, message);
+      _isTextEmpty = true;
     });
+    message.animationController.forward();
   }
 
   void _handleTextChanged(String text) {
@@ -104,31 +117,36 @@ class ChatScreenState extends State<ChatScreen> {
 }
 
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text});
+  ChatMessage({this.text, this.animationController});
   final String text;
+  final AnimationController animationController;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(child: Text(_name[0])),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(_name, style: Theme.of(context).textTheme.subhead),
-              Container(
-                margin: EdgeInsets.only(top: 5.0),
-                child: Text(text),
-              )
-            ],
-          )
-        ],
+    return FadeTransition(
+      opacity:
+          CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(right: 16.0),
+              child: CircleAvatar(child: Text(_name[0])),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(_name, style: Theme.of(context).textTheme.subhead),
+                Container(
+                  margin: EdgeInsets.only(top: 5.0),
+                  child: Text(text),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
