@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 void main() => runApp(FriendlychatApp());
 
 const _name = "y_mengae";
+
+final kIOSTheme = ThemeData(
+  primarySwatch: Colors.orange,
+  primaryColor: Colors.grey[100],
+  primaryColorBrightness: Brightness.light,
+);
+
+final kDefaultTheme = ThemeData(
+  primarySwatch: Colors.purple,
+  accentColor: Colors.orangeAccent[400],
+);
 
 class FriendlychatApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -11,6 +23,9 @@ class FriendlychatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Friendlychat',
+      theme: defaultTargetPlatform == TargetPlatform.iOS
+          ? kIOSTheme
+          : kDefaultTheme,
       home: ChatScreen(),
     );
   }
@@ -29,28 +44,40 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Friendlychat")),
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              Flexible(
-                child: ListView.builder(
-                  padding: EdgeInsets.all(8.0),
-                  reverse: true,
-                  itemBuilder: (_, int index) => _messages[index],
-                  itemCount: _messages.length,
+      appBar: AppBar(
+        title: Text("Friendlychat"),
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+      ),
+      body: SafeArea(
+        child: Container(
+            child: Column(
+              children: <Widget>[
+                Flexible(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(8.0),
+                    reverse: true,
+                    itemBuilder: (_, int index) => _messages[index],
+                    itemCount: _messages.length,
+                  ),
                 ),
-              ),
-              Divider(
-                height: 1.0,
-              ),
-              Material(
-                color: Theme.of(context).cardColor,
-                child: _buildTextComposer(),
-              ),
-            ],
-          ),
-        ));
+                Divider(
+                  height: 1.0,
+                ),
+                Material(
+                  color: Theme.of(context).cardColor,
+                  child: _buildTextComposer(),
+                ),
+              ],
+            ),
+            decoration: Theme.of(context).platform == TargetPlatform.iOS
+                ? BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Colors.grey[200]),
+                    ),
+                  )
+                : null),
+      ),
+    );
   }
 
   @override
